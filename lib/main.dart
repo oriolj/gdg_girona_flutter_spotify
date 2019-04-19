@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gdg_girona_spotify_flutter_app/screens/login_screen.dart';
+import 'package:gdg_girona_spotify_flutter_app/screens/search_artist_screen.dart';
 import 'package:gdg_girona_spotify_flutter_app/services/UserService.dart';
 
 void main() => runApp(MyApp());
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
             var isLogged = snapshot.data;
             if (isLogged) {
               print("Already logged");
-              return LoggedScreen();
+              return SearchArtist();
             } else {
               print("Not yet logged");
               return NonLoggedScreen();
@@ -43,28 +44,5 @@ class NonLoggedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SignInScreen();
-  }
-}
-
-class LoggedScreen extends StatelessWidget {
-  LoggedScreen({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("GDG Spotify"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Already Logged!',
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
