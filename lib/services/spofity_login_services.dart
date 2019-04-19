@@ -30,4 +30,26 @@ class SpotifyLoginService {
     print(spotifyTokens.access_token);
     return spotifyTokens;
   }
+
+  Future<SpotifyTokens> getNewToken(String refreshToken) async {
+    var url = 'https://accounts.spotify.com/api/token';
+    var secrets = await SecretLoader().load();
+    var response = await post(
+      url,
+      body: {
+        'grant_type': 'refresh_token',
+        'refresh_token': refreshToken,
+        'client_id': secrets.clientId,
+        'client_secret': secrets.clientSecret,
+      },
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    final spotifyTokens = SpotifyTokens.fromJson(_extractData(response));
+
+    print("access token:");
+    print(spotifyTokens.access_token);
+    return spotifyTokens;
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gdg_girona_spotify_flutter_app/screens/login_screen.dart';
+import 'package:gdg_girona_spotify_flutter_app/services/UserService.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,27 +8,46 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    UserService userService = UserService();
+
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Spotify Flutter GDG Girona',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-//      home: NonLoggedScreen(),
-      home: LoggedScreen(),
+      home: FutureBuilder(
+        future: userService.isLogged(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            var isLogged = snapshot.data;
+            if (isLogged) {
+              print("Already logged");
+              return LoggedScreen();
+            } else {
+              print("Not yet logged");
+              return NonLoggedScreen();
+            }
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
 
-class LoggedScreen extends StatelessWidget {
-  LoggedScreen({Key key}) : super(key: key);
+class NonLoggedScreen extends StatelessWidget {
+  NonLoggedScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SignInScreen();
   }
 }
-class NonLoggedScreen extends StatelessWidget {
-  NonLoggedScreen({Key key}) : super(key: key);
+
+class LoggedScreen extends StatelessWidget {
+  LoggedScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +59,8 @@ class NonLoggedScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-//              color: Colors.green,
-              onPressed: null,
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(30.0)),
-              child: Text(
-                'Login to Spotify',
-              ),
+            Text(
+              'Already Logged!',
             ),
           ],
         ),

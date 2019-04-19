@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:gdg_girona_spotify_flutter_app/helpers/SecretLoader.dart';
+import 'package:gdg_girona_spotify_flutter_app/services/UserService.dart';
 import 'package:gdg_girona_spotify_flutter_app/services/spofity_login_services.dart';
 
 // https://pub.dartlang.org/packages/flutter_webview_plugin#-readme-tab-
@@ -8,9 +9,17 @@ import 'package:gdg_girona_spotify_flutter_app/services/spofity_login_services.d
 class SignInScreen extends StatelessWidget {
   SignInScreen({Key key}) : super(key: key);
 
+  registerTokens(String code) async {
+    final SpotifyLoginService spotifyLoginService = SpotifyLoginService();
+    final UserService userService = UserService();
+
+    var tokens = await spotifyLoginService.getTokens(code);
+    userService.saveTokenInfo(tokens);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final SpotifyLoginService spotifyLoginService = SpotifyLoginService();
+
     final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
     flutterWebviewPlugin.onUrlChanged.listen((String url) {
@@ -18,12 +27,7 @@ class SignInScreen extends StatelessWidget {
       if (url.startsWith("https://example.com/callback")) {
         flutterWebviewPlugin.stopLoading();
         var code = url.split("code=")[1];
-        print("code: $code");
-
-        var tokens = spotifyLoginService.getTokens(code);
-
-//        final access_token = tokens.access_token;
-//        print("access token: $access_token");
+        registerTokens(code);
       }
     });
 
