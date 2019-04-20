@@ -49,24 +49,39 @@ class _SearchArtistWidgetState extends State<SearchArtistWidget> {
 
   @override
   Widget build(BuildContext context) {
-    controller.addListener(() {
-//      if (_searchText.length < 3) return;
-      _searchText = controller.text;
-      updateResults(_searchText);
-    });
+//    controller.addListener(() {
+////      if (_searchText.length < 3) return;
+//      _searchText = controller.text;
+//      updateResults(_searchText);
+//    });
 
     return Scaffold(
       appBar: AppBar(title: Text("Search Artist")),
       body: Column(
         children: <Widget>[
-          TextField(
-            controller: controller,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onSubmitted: (text) {
+                _searchText = text;
+                updateResults(_searchText);
+              },
+              controller: controller,
+              decoration: InputDecoration(
+                  labelText: 'Artist name',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(0.0))),
+              maxLines: 1,
+            ),
           ),
           Expanded(
             child: ListView.builder(
               itemCount: searchResults.length,
               itemBuilder: (context, index) {
-                return SpotifyArtistWidget(searchResults[index]);
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SpotifyArtistWidget(searchResults[index]),
+                );
               },
             ),
           ),
