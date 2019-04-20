@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gdg_girona_spotify_flutter_app/models/SpotifyArtist.dart';
 import 'package:gdg_girona_spotify_flutter_app/services/UserService.dart';
 import 'package:gdg_girona_spotify_flutter_app/services/spofity_search_services.dart';
+import 'package:gdg_girona_spotify_flutter_app/widgets/SpotifyArtistWidget.dart';
 
-// https://pub.dartlang.org/packages/flutter_webview_plugin#-readme-tab-
 
-class SearchArtist extends StatelessWidget {
-  SearchArtist({Key key}) : super(key: key);
+class SearchArtistScreen extends StatelessWidget {
+  SearchArtistScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,28 +40,19 @@ class _SearchArtistWidgetState extends State<SearchArtistWidget> {
   final String _accessToken;
   SpotifySearchService spotifySearchService = SpotifySearchService();
 
-  final items = List<String>.generate(10000, (i) => "Item $i");
+  List<SpotifyArtist> searchResults = List<SpotifyArtist>();
+
   String _searchText = "";
   TextEditingController controller = TextEditingController();
 
-  int _counter = 0;
-
   _SearchArtistWidgetState(this._accessToken);
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     controller.addListener(() {
 //      if (_searchText.length < 3) return;
       _searchText = controller.text;
-      setState(() {
-        spotifySearchService.searchArtist(_accessToken, _searchText);
-      });
+      updateResults(_searchText);
     });
 
     return Scaffold(
@@ -72,16 +64,21 @@ class _SearchArtistWidgetState extends State<SearchArtistWidget> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: items.length,
+              itemCount: searchResults.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('${items[index]}'),
-                );
+                return SpotifyArtistWidget(searchResults[index]);
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  updateResults(String searchText) async {
+    var results = await spotifySearchService.searchArtist(_accessToken, _searchText);
+    setState(() {
+      searchResults = results;
+    });
   }
 }

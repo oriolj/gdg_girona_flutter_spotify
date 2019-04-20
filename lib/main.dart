@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
             var isLogged = snapshot.data;
             if (isLogged) {
               print("Already logged");
-              return SearchArtist();
+              return SearchArtistScreen();
             } else {
               print("Not yet logged");
               return NonLoggedScreen();
